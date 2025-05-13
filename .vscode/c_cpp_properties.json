@@ -4,7 +4,11 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/python_bindings",
                 "${workspaceFolder}/pybind11/include",
+                "${workspaceFolder}/pybind11",
                 "C:/Users/kb150/anaconda3/include",
                 "C:/Users/kb150/anaconda3/Lib/site-packages/pybind11/include"
             ],

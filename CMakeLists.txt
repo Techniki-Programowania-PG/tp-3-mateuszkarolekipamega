@@ -1,21 +1,36 @@
-cmake_minimum_required(VERSION 3.10)
-project(projekcikTP3)
+cmake_minimum_required(VERSION 3.14)
+project(projekcikTP3 LANGUAGES CXX)
 
-# Dodaj folder 'include' z pybind11
-include_directories(${CMAKE_SOURCE_DIR}/pybind11/include)
+# --- Wymagania C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Dodaj folder 'include' z Pythona (Anaconda)
-include_directories("C:/Users/kb150/anaconda3/include")
-
-# Znajdź Python3
+set(Python3_EXECUTABLE "C:/Users/kb150/anaconda3/envs/myenv/python.exe")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
-# Dodaj katalogi nagłówków Pythona
-include_directories(${Python3_INCLUDE_DIRS})
-link_directories(${Python3_LIBRARY_DIRS})
 
-# Zdefiniuj bibliotekę dla modułu Pythona
-add_library(projekcikTP3 MODULE python_bindings/bindings.cpp)
+# --- Lokalna wersja pybind11
+add_subdirectory(pybind11)  # nie używaj find_package(pybind11)
 
-# Linkuj z pybind11 oraz Pythona
-target_link_libraries(projekcikTP3 PRIVATE pybind11::module Python3::Python)
+# --- Znajdź Pythona (do include_dirs)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
+# --- Katalogi nagłówków
+include_directories(
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_SOURCE_DIR}/python_bindings
+  ${Python3_INCLUDE_DIRS}
+)
+
+# --- Tworzenie modułu Pythona (.pyd)
+pybind11_add_module(
+  projekcikTP3
+  python_bindings/bindings.cpp
+  src/projekcikTP3.cpp
+)
+
+# --- Folder wyjściowy
+set_target_properties(projekcikTP3 PROPERTIES
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
