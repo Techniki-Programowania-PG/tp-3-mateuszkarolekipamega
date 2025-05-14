@@ -1,36 +1,50 @@
 cmake_minimum_required(VERSION 3.14)
 project(projekcikTP3 LANGUAGES CXX)
 
-# --- Wymagania C++
+# — ustawienia C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# — wskaż interpreter Pythona i nagłówki + biblioteki deweloperskie
 set(Python3_EXECUTABLE "C:/Users/kb150/anaconda3/envs/myenv/python.exe")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
+# — podprojekty: PyBind11 i Matplot++
+add_subdirectory(matplotplusplus)
+add_subdirectory(pybind11)
 
-# --- Lokalna wersja pybind11
-add_subdirectory(pybind11)  # nie używaj find_package(pybind11)
-
-# --- Znajdź Pythona (do include_dirs)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-
-# --- Katalogi nagłówków
-include_directories(
-  ${PROJECT_SOURCE_DIR}/include
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_SOURCE_DIR}/python_bindings
-  ${Python3_INCLUDE_DIRS}
+# === 1) EXE: prosty program z main.cpp
+add_executable(projekcikTP3
+    src/main.cpp
+)
+# Matplot++ samo propaguje swoje include’y dzięki add_subdirectory
+target_link_libraries(projekcikTP3
+    PRIVATE matplot
 )
 
-# --- Tworzenie modułu Pythona (.pyd)
-pybind11_add_module(
-  projekcikTP3
-  python_bindings/bindings.cpp
-  src/projekcikTP3.cpp
+target_include_directories(projekcikTP3
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/matplotplusplus/dist/include
 )
 
-# --- Folder wyjściowy
-set_target_properties(projekcikTP3 PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+
+pybind11_add_module(projekcikTP3_python
+    python_bindings/bindings.cpp
+    src/projekcikTP3.cpp
+)
+
+target_include_directories(projekcikTP3_python
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+# bindingi mogą korzystać zarówno z PyBind11, jak i z Matplot++
+target_link_libraries(projekcikTP3_python
+    PRIVATE 
+        matplot               # jeśli w bindingach używasz Matplot++
+        pybind11::module      # zapewnia link do pythonXY.lib i include’y pybind11
+)
+
+# — umieść .pyd obok exe w build/
+set_target_properties(projekcikTP3_python PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
