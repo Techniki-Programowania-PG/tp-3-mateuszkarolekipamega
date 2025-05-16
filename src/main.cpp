@@ -5,130 +5,115 @@
 
 using namespace std;
 
-int Sinus(double freq) {
+void Sinus(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
 
-    // Zakres czasu (np. 0 do 1 sekundy)
-    vector<double> x;
-    vector<double> y;
-
-    double sampling_rate = 1000; // 1000 próbek na sekundę
-    double duration = 1.0;       // czas trwania sygnału w sekundach
-
-    for (int i = 0; i < duration * sampling_rate; ++i) {
-        double t = i / sampling_rate;
-        x.push_back(t);
-        y.push_back(sin(2 * pi * freq * t));
+    if (num_samples <= 1 || end_time <= start_time) {
+        cerr << "Nieprawidłowe dane wejściowe.\n";
+        return;
     }
 
-    // Rysowanie wykresu
-    plot(x, y);
-    title("Wykres funkcji sinusoidalnej");
+    vector<double> t(num_samples);
+    double dt = (end_time - start_time) / (num_samples - 1);
+    for (int i = 0; i < num_samples; ++i)
+        t[i] = start_time + i * dt;
+
+    vector<double> y(num_samples);
+    for (int i = 0; i < num_samples; ++i)
+        y[i] = sin(2 * pi * frequency * t[i]);
+
+    plot(t, y);
+    title("Sygnał sinusoidalny");
     xlabel("Czas [s]");
     ylabel("Amplituda");
     grid(on);
-
     show();
-
-    return 0;
 }
 
-int Cosinus(double freq) {
+void Cosinus(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
 
-    // Zakres czasu (np. 0 do 1 sekundy)
-    vector<double> x;
-    vector<double> y;
-
-    double sampling_rate = 1000; // 1000 próbek na sekundę
-    double duration = 1.0;       // czas trwania sygnału w sekundach
-
-    for (int i = 0; i < duration * sampling_rate; ++i) {
-        double t = i / sampling_rate;
-        x.push_back(t);
-        y.push_back(cos(2 * pi * freq * t));
+    if (num_samples <= 1 || end_time <= start_time) {
+        cerr << "Nieprawidłowe dane wejściowe.\n";
+        return;
     }
 
-    // Rysowanie wykresu
-    plot(x, y);
-    title("Wykres funkcji cosinusoidalnej");
+    vector<double> t(num_samples);
+    double dt = (end_time - start_time) / (num_samples - 1);
+    for (int i = 0; i < num_samples; ++i)
+        t[i] = start_time + i * dt;
+
+    vector<double> y(num_samples);
+    for (int i = 0; i < num_samples; ++i)
+        y[i] = cos(2 * pi * frequency * t[i]);
+
+    plot(t, y);
+    title("Sygnał cosinusoidalny");
     xlabel("Czas [s]");
     ylabel("Amplituda");
     grid(on);
-
     show();
-
-    return 0;
 }
 
-int Rectangular(double freq) {
+void Rectangular(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
 
-    // Zakres czasu (np. 0 do 1 sekundy)
-    vector<double> x;
-    vector<double> y;
-
-    double sampling_rate = 1000; // 1000 próbek na sekundę
-    double duration = 1.0;       // czas trwania sygnału w sekundach
-
-    for (int i = 0; i < duration * sampling_rate; ++i) {
-        double t = i / sampling_rate;
-        x.push_back(t);
-        y.push_back((fmod(t, 1.0 / freq) < (1.0 / (2 * freq))) ? 1.0 : -1.0);
+    if (num_samples <= 1 || end_time <= start_time) {
+        cerr << "Nieprawidłowe dane wejściowe.\n";
+        return;
     }
 
-    // Rysowanie wykresu
-    plot(x, y);
-    title("Wykres funkcji prostokątnej");
+    vector<double> t(num_samples);
+    double dt = (end_time - start_time) / (num_samples - 1);
+    for (int i = 0; i < num_samples; ++i)
+        t[i] = start_time + i * dt;
+
+    vector<double> y(num_samples);
+    for (int i = 0; i < num_samples; ++i) {
+        double val = sin(2 * pi * frequency * t[i]);
+        y[i] = (val >= 0 ? 1.0 : -1.0);
+    }
+
+    plot(t, y);
+    title("Sygnał prostokątny");
     xlabel("Czas [s]");
     ylabel("Amplituda");
     grid(on);
-
     show();
-
-    return 0;
 }
 
-int Sawtooth(double freq) {
+void Sawtooth(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
 
-    // Zakres czasu (np. 0 do 1 sekundy)
-    vector<double> x;
-    vector<double> y;
-
-    double sampling_rate = 1000; // 1000 próbek na sekundę
-    double duration = 1.0;       // czas trwania sygnału w sekundach
-
-    for (int i = 0; i < duration * sampling_rate; ++i) {
-        double t = i / sampling_rate;
-        x.push_back(t);
-        y.push_back(2 * (t * freq - floor(t * freq + 0.5)));
+    if (num_samples <= 1 || end_time <= start_time) {
+        cerr << "Nieprawidłowe dane wejściowe.\n";
+        return;
     }
 
-    // Rysowanie wykresu
-    plot(x, y);
-    title("Wykres funkcji piłokształtnej");
+    vector<double> t(num_samples);
+    double dt = (end_time - start_time) / (num_samples - 1);
+    for (int i = 0; i < num_samples; ++i)
+        t[i] = start_time + i * dt;
+
+    vector<double> y(num_samples);
+    for (int i = 0; i < num_samples; ++i) {
+        double val = 2.0 * (frequency * t[i] - floor(frequency * t[i] + 0.5));
+        y[i] = val;
+    }
+
+    plot(t, y);
+    title("Sygnał piłokształtny");
     xlabel("Czas [s]");
     ylabel("Amplituda");
     grid(on);
-
     show();
-
-    return 0;
 }
 
-//narazie dalem int main aby testowac funkcje
+// Przykład testowy w main:
 int main() {
-
-    double freq_choice;
-
-    std::cout << "Podaj częstotliwość (Hz): ";
-    std::cin >> freq_choice;
-    
-    //Cosinus(freq_choice);
-    //Sinus(freq_choice);
-    //Rectangular(freq_choice);
-    Sawtooth(freq_choice);
-
+    Sinus(1.0, 0.0, 2.0, 100);
+    Cosinus(2.0, 0.0, 1.0, 200);
+    Rectangular(5.0, 0.0, 1.0, 500);
+    Sawtooth(3.0, 0.0, 1.0, 300);
     return 0;
 }
