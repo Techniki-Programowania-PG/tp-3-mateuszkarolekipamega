@@ -1,10 +1,56 @@
 #include "../matplotplusplus/source/matplot/matplot.h"
-#include "projekcikTP3.hpp"
+#include <projekcikTP3.hpp>
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <complex>
+#include <initializer_list>
 
 using namespace std;
+
+using Complex = complex<double>;
+const double PI = 3.141592653589793;
+
+// Funkcja obliczająca i wyświetlająca DFT oraz IDFT
+void DFT(const std::vector<double>& input) {
+    vector<double> signal(input);
+    int N = signal.size();
+    vector<Complex> spectrum(N);
+
+    // Obliczanie DFT
+    for (int k = 0; k < N; ++k) {
+        Complex sum(0.0, 0.0);
+        for (int n = 0; n < N; ++n) {
+            double angle = -2 * PI * k * n / N;
+            sum += signal[n] * exp(Complex(0, angle));
+        }
+        spectrum[k] = sum;
+    }
+
+    // Wyświetlanie widma
+    cout << "Widmo (DFT):" << endl;
+    for (const auto& c : spectrum) {
+        cout << c << endl;
+    }
+
+    // Odwrotna transformata
+    vector<double> back2normal_signal(N);
+    for (int n = 0; n < N; ++n) {
+        Complex sum(0.0, 0.0);
+        for (int k = 0; k < N; ++k) {
+            double angle = 2 * PI * k * n / N;
+            sum += spectrum[k] * exp(Complex(0, angle));
+        }
+        back2normal_signal[n] = sum.real() / N;
+    }
+
+    // Wyświetlanie odzyskanego sygnału
+    cout << "\nOdzyskany sygnał (IDFT):" << endl;
+    for (const auto& val : back2normal_signal) {
+        cout << val << " ";
+    }
+    cout << endl << endl;
+}
 
 void Sinus(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
@@ -112,6 +158,7 @@ void Sawtooth(double frequency, double start_time, double end_time, int num_samp
 
 // Przykład testowy w main:
 int main() {
+    DFT({1,2,5,9,2,3});
     Sinus(1.0, 0.0, 2.0, 100);
     Cosinus(2.0, 0.0, 1.0, 200);
     Rectangular(5.0, 0.0, 1.0, 500);

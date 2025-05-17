@@ -17,5 +17,9 @@ PYBIND11_MODULE(projekcikTP3, m) {
 
     m.def("sawtooth", &Sawtooth, "Sygnał piłokształtny",
           py::arg("frequency"), py::arg("start_time"), py::arg("end_time"), py::arg("sample_count"));
-}
+
+          // Ensure DFT is a function, not a class or object
+m.def("DFT", &DFT, "Oblicza i wypisuje DFT oraz IDFT",
+py::arg("input"));
+} 
 
