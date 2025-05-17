@@ -11,18 +11,16 @@ using namespace std;
 using Complex = complex<double>;
 const double PI = 3.141592653589793;
 
-// Funkcja obliczająca i wyświetlająca DFT oraz IDFT
+// Funkcja obliczająca i wyświetlająca DFT
 void DFT(const std::vector<double>& input) {
-    vector<double> signal(input);
-    int N = signal.size();
+    int N = input.size();
     vector<Complex> spectrum(N);
 
-    // Obliczanie DFT
     for (int k = 0; k < N; ++k) {
         Complex sum(0.0, 0.0);
         for (int n = 0; n < N; ++n) {
             double angle = -2 * PI * k * n / N;
-            sum += signal[n] * exp(Complex(0, angle));
+            sum += input[n] * exp(Complex(0, angle));
         }
         spectrum[k] = sum;
     }
@@ -32,25 +30,30 @@ void DFT(const std::vector<double>& input) {
     for (const auto& c : spectrum) {
         cout << c << endl;
     }
+}
 
-    // Odwrotna transformata
-    vector<double> back2normal_signal(N);
+// Funkcja odwrotna - IDFT z wektora zespolonego (widma)
+void I_DFT(const std::vector<std::complex<double>>& spectrum) {
+    int N = spectrum.size();
+    std::vector<double> back2normal_signal(N);
+
     for (int n = 0; n < N; ++n) {
-        Complex sum(0.0, 0.0);
+        std::complex<double> sum(0.0, 0.0);
         for (int k = 0; k < N; ++k) {
             double angle = 2 * PI * k * n / N;
-            sum += spectrum[k] * exp(Complex(0, angle));
+            sum += spectrum[k] * std::exp(std::complex<double>(0, angle));
         }
         back2normal_signal[n] = sum.real() / N;
     }
 
-    // Wyświetlanie odzyskanego sygnału
-    cout << "\nOdzyskany sygnał (IDFT):" << endl;
+    // Wypisywanie sygnału
+    std::cout << "\nOdzyskany sygnał (IDFT):" << std::endl;
     for (const auto& val : back2normal_signal) {
-        cout << val << " ";
+        std::cout << val << " ";
     }
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
 }
+
 
 void Sinus(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
@@ -159,6 +162,7 @@ void Sawtooth(double frequency, double start_time, double end_time, int num_samp
 // Przykład testowy w main:
 int main() {
     DFT({1,2,5,9,2,3});
+    I_DFT({{1, 0}, {6, 3}, {9, 2}, {-8, 2}, {22, 3}, {0, 0}}); // Przykładowe widmo
     Sinus(1.0, 0.0, 2.0, 100);
     Cosinus(2.0, 0.0, 1.0, 200);
     Rectangular(5.0, 0.0, 1.0, 500);
