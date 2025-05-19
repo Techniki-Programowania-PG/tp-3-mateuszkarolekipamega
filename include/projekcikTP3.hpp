@@ -9,3 +9,6 @@ void Rectangular(double frequency, double start_time, double end_time, int sampl
 void Sawtooth(double frequency, double start_time, double end_time, int sample_count);
 void DFT(const std::vector<double>& input);
 void I_DFT(const std::vector<std::complex<double>>& spectrum);
+void DFTFiltre_Reversed(const std::vector<double>& input);
+void FiltreLowFrequencies(std::vector<std::complex<double>>& out, double threshold);
+void I_DFTFiltre(const std::vector<std::complex<double>>& spectrum);

@@ -9,8 +9,7 @@
         "${workspaceFolder}/pybind11/include",
         "${workspaceFolder}/matplotplusplus/source",
         "${workspaceFolder}/matplotplusplus/dist/include",
-        "C:/Users/kb150/anaconda3/envs/myenv/include",
-        "C:/Users/kb150/anaconda3/Lib/site-packages/pybind11/include"
+        "C:/Users/kb150/AppData/Local/Programs/Python/Python313/include"
       ],
       "defines": [
         "_DEBUG",

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # — wskaż interpreter Pythona i nagłówki + biblioteki deweloperskie
-set(Python3_EXECUTABLE "C:/Users/kb150/anaconda3/envs/myenv/python.exe")
+set(Python3_EXECUTABLE "C:/Users/kb150/AppData/Local/Programs/Python/Python313/python.exe")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 # — podprojekty: PyBind11 i Matplot++

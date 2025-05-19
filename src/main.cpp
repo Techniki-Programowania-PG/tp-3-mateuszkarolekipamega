@@ -11,9 +11,9 @@ using Complex = complex<double>;
 const double PI = 3.141592653589793;
 
 // Funkcja obliczająca i wyświetlająca DFT
-void DFT(const std::vector<double>& input) {
+void DFT(const vector<double>& input) {
     int N = input.size();
-    vector<Complex> spectrum(N);
+    vector<Complex> out(N);
 
     for (int k = 0; k < N; ++k) {
         Complex sum(0.0, 0.0);
@@ -21,36 +21,97 @@ void DFT(const std::vector<double>& input) {
             double angle = -2 * PI * k * n / N;
             sum += input[n] * exp(Complex(0, angle));
         }
-        spectrum[k] = sum;
+        if (abs(sum.imag()) < 1e-4)
+            sum = Complex(sum.real(), 0.0);
+        out[k] = sum;
     }
 
-    // Wyświetlanie widma
-    cout << "Widmo (DFT):" << endl;
-    for (const auto& c : spectrum) {
-        cout << c << endl;
-    }
+    cout << "Widmo DFT: ";
+    for (const auto& val : out)
+        cout << val << " ";
+    cout << endl;
 }
 
-// Funkcja odwrotna - IDFT z wektora zespolonego (widma)
-void I_DFT(const std::vector<std::complex<double>>& spectrum) {
+// Funkcja I_DFT
+void I_DFT(const vector<Complex>& spectrum) {
     int N = spectrum.size();
-    std::vector<double> back2normal_signal(N);
+    vector<double> signal(N);
 
     for (int n = 0; n < N; ++n) {
-        std::complex<double> sum(0.0, 0.0);
+        Complex sum(0.0, 0.0);
         for (int k = 0; k < N; ++k) {
             double angle = 2 * PI * k * n / N;
-            sum += spectrum[k] * std::exp(std::complex<double>(0, angle));
+            sum += spectrum[k] * exp(Complex(0, angle));
         }
-        back2normal_signal[n] = sum.real() / N;
+        signal[n] = sum.real() / N;
     }
 
-    // Wypisywanie sygnału
-    std::cout << "\nOdzyskany sygnał (IDFT):" << std::endl;
-    for (const auto& val : back2normal_signal) {
-        std::cout << val << " ";
+    cout << "Sygnał po I_DFT: ";
+    for (const auto& val : signal)
+        cout << val << " ";
+    cout << endl;
+}
+
+// Filtrowanie niskich częstotliwości
+void FiltreLowFrequencies(vector<Complex>& out, double threshold) {
+    int N = out.size();
+    int g = 1;
+    int cutoff = static_cast<int>(threshold * N);
+
+    for (int k = 1; k <= cutoff; ++k) {
+        out[0] = 0;
+        out[k - 1] = 0;
+        if (g == 1) {
+            out[N - k] = 0;
+            g = 0;
+        }
+        out[N - k - 1] = 0;
     }
-    std::cout << std::endl << std::endl;
+
+    cout << "Sygnał po filtracji: ";
+    for (const auto& val : out)
+        cout << val << " ";
+    cout << endl;
+}
+
+// I_DFT z filtrem
+void I_DFTFiltre(const vector<Complex>& spectrum) {
+    int N = spectrum.size();
+    vector<double> signal(N);
+
+    for (int n = 0; n < N; ++n) {
+        Complex sum(0.0, 0.0);
+        for (int k = 0; k < N; ++k) {
+            double angle = 2 * PI * k * n / N;
+            sum += spectrum[k] * exp(Complex(0, angle));
+        }
+        signal[n] = sum.real() / N;
+    }
+
+    cout << "Sygnał po I_DFT (po filtracji): ";
+    for (const auto& val : signal)
+        cout << val << " ";
+    cout << endl;
+}
+
+// Funkcja pełnego przetwarzania: DFT + filtracja + odwrotność
+void DFTFiltre_Reversed(const vector<double>& signal) {
+    int N = signal.size();
+    vector<Complex> out(N);
+
+    for (int k = 0; k < N; ++k) {
+        Complex sum(0.0, 0.0);
+        for (int n = 0; n < N; ++n) {
+            double angle = -2 * PI * k * n / N;
+            sum += signal[n] * exp(Complex(0, angle));
+        }
+        if (abs(sum.imag()) < 1e-4)
+            sum = Complex(sum.real(), 0.0);
+        out[k] = sum;
+    }
+
+    FiltreLowFrequencies(out, 0.2);
+    I_DFTFiltre(out);
 }
 
 
@@ -160,8 +221,9 @@ void Sawtooth(double frequency, double start_time, double end_time, int num_samp
 
 // Przykład testowy w main:
 int main() {
-    DFT({1,2,5,9,2,3});
-    I_DFT({{1, 0}, {6, 3}, {9, 2}, {-8, 2}, {22, 3}, {0, 0}}); // Przykładowe widmo
+    DFT({1, 2, 5, 9, 2, 3});
+    I_DFT({{1, 0}, {6, 3}, {9, 2}, {-8, 2}, {22, 3}, {0, 0}});
+    DFTFiltre_Reversed({1, 2, 5, 9, 2, 3});
     Sinus(1.0, 0.0, 2.0, 100);
     Cosinus(2.0, 0.0, 1.0, 200);
     Rectangular(5.0, 0.0, 1.0, 500);
