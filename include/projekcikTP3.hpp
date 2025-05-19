@@ -15,3 +15,4 @@ void DFTFiltre_Reversed(const std::vector<double>& input);
 void FiltreLowFrequencies(std::vector<std::complex<double>>& out, double threshold);
 void I_DFTFiltre(const std::vector<std::complex<double>>& spectrum);
 void Filter1D(const vector<double>& signal, int window_size);
+void TestFilter2D(const vector<vector<double>>& image);

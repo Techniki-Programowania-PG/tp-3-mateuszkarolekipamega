@@ -117,7 +117,7 @@ void DFTFiltre_Reversed(const vector<double>& signal) {
 
 void Filter1D(const vector<double>& signal, int window_size) {
     using namespace matplot;
-    
+
     if (window_size < 1 || window_size % 2 == 0 || signal.size() < window_size) {
         cerr << "Nieprawidłowy rozmiar okna filtracji lub sygnał zbyt krótki.\n";
         return;
@@ -148,6 +148,86 @@ void Filter1D(const vector<double>& signal, int window_size) {
     legend();
     grid(on);
     show();
+}
+
+// teraz filtered jest przekazywany przez referencję i modyfikowany wewnątrz
+void Filter2D(const vector<vector<double>>& image, int window_size, vector<vector<double>>& filtered) {
+    // using namespace matplot;
+    if (window_size < 1 || window_size % 2 == 0) {
+        cerr << "Nieprawidłowy rozmiar okna filtracji (musi być nieparzysty i >=1).\n";
+        return;
+    }
+    if (image.empty() || image[0].empty()) {
+        cerr << "Pusta macierz obrazu.\n";
+        return;
+    }
+    int rows = (int)image.size();
+    int cols = (int)image[0].size();
+    if (rows < window_size || cols < window_size) {
+        cerr << "Obraz zbyt mały w stosunku do rozmiaru okna filtracji.\n";
+        return;
+    }
+
+    filtered.assign(rows, vector<double>(cols, 0.0)); // inicjalizacja macierzy wynikowej
+    int offset = window_size / 2;
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            double sum = 0.0;
+            int count = 0;
+            for (int wi = -offset; wi <= offset; ++wi) {
+                for (int wj = -offset; wj <= offset; ++wj) {
+                    int ni = i + wi;
+                    int nj = j + wj;
+                    if (ni >= 0 && ni < rows && nj >= 0 && nj < cols) {
+                        sum += image[ni][nj];
+                        ++count;
+                    }
+                }
+            }
+            filtered[i][j] = sum / count;
+        }
+    }
+}
+
+void TestFilter2D(const vector<vector<double>>& image) {
+   
+    vector<vector<double>> filtered;
+
+    int window_size = 3;
+    Filter2D(image, window_size, filtered);
+
+    cout << "Oryginalny obraz:\n";
+    for (const auto& row : image) {
+        for (double val : row) cout << val << "\t";
+        cout << "\n";
+    }
+
+    cout << "\nObraz po filtracji 2D:\n";
+    for (const auto& row : filtered) {
+        for (double val : row) cout << val << "\t";
+        cout << "\n";
+    }
+
+     // --- Zakomentowane wyświetlanie w Matplot++ ---
+    /*
+    using namespace matplot;
+
+    auto f = figure(true);
+    f->size(900, 400);
+
+    subplot(1, 2, 0);
+    imagesc(image);
+    title("Oryginalny obraz");
+    colorbar();
+
+    subplot(1, 2, 1);
+    imagesc(filtered);
+    title("Obraz po filtracji 2D");
+    colorbar();
+
+    show();
+    */
 }
 
 void Sinus(double frequency, double start_time, double end_time, int num_samples) {

@@ -25,7 +25,7 @@ m.def("DFT", &DFT);
 m.def("I_DFT", &I_DFT);
 m.def("DFTFiltre_Reversed", &DFTFiltre_Reversed);
 m.def("Filter1D", &Filter1D);
-
+m.def("TestFilter2D", &TestFilter2D);
 }
  
 
