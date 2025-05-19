@@ -114,6 +114,40 @@ void DFTFiltre_Reversed(const vector<double>& signal) {
     I_DFTFiltre(out);
 }
 
+void Filter1D(const vector<double>& signal, int window_size) {
+    using namespace matplot;
+    
+    if (window_size < 1 || window_size % 2 == 0 || signal.size() < window_size) {
+        cerr << "Nieprawidłowy rozmiar okna filtracji lub sygnał zbyt krótki.\n";
+        return;
+    }
+
+    vector<double> filtered;
+    int offset = window_size / 2;
+
+    for (size_t i = 0; i < signal.size(); ++i) {
+        double sum = 0.0;
+        int count = 0;
+        for (int j = -offset; j <= offset; ++j) {
+            if (i + j >= 0 && i + j < signal.size()) {
+                sum += signal[i + j];
+                ++count;
+            }
+        }
+        filtered.push_back(sum / count);
+    }
+
+    // wykres oryginału i przefiltrowanego sygnału
+    auto t = linspace(0, signal.size() - 1, signal.size());
+    plot(t, signal)->line_width(2).display_name("Oryginalny");
+    plot(t, filtered)->line_width(2).display_name("Filtrowany");
+    title("Filtracja 1D (średnia ruchoma)");
+    xlabel("Index");
+    ylabel("Amplituda");
+    legend();
+    grid(on);
+    show();
+}
 
 void Sinus(double frequency, double start_time, double end_time, int num_samples) {
     using namespace matplot;
