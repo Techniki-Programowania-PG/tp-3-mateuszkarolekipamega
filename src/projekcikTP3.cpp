@@ -4,7 +4,6 @@
 #include <vector>
 #include <iostream>
 #include <complex>
-#include <initializer_list>
 
 using namespace std;
 
@@ -168,7 +167,7 @@ void Filter2D(const vector<vector<double>>& image, int window_size, vector<vecto
         return;
     }
 
-    filtered.assign(rows, vector<double>(cols, 0.0)); // inicjalizacja macierzy wynikowej
+    filtered.assign(rows, vector<double>(cols, 0.0));
     int offset = window_size / 2;
 
     for (int i = 0; i < rows; ++i) {
@@ -208,26 +207,6 @@ void TestFilter2D(const vector<vector<double>>& image) {
         for (double val : row) cout << val << "\t";
         cout << "\n";
     }
-
-     // --- Zakomentowane wyświetlanie w Matplot++ ---
-    /*
-    using namespace matplot;
-
-    auto f = figure(true);
-    f->size(900, 400);
-
-    subplot(1, 2, 0);
-    imagesc(image);
-    title("Oryginalny obraz");
-    colorbar();
-
-    subplot(1, 2, 1);
-    imagesc(filtered);
-    title("Obraz po filtracji 2D");
-    colorbar();
-
-    show();
-    */
 }
 
 void Sinus(double frequency, double start_time, double end_time, int num_samples) {
@@ -334,14 +313,6 @@ void Sawtooth(double frequency, double start_time, double end_time, int num_samp
     show();
 }
 
-// Przykład testowy w main:
-int main() {
-    DFT({1, 2, 5, 9, 2, 3});
-    I_DFT({{1, 0}, {6, 3}, {9, 2}, {-8, 2}, {22, 3}, {0, 0}});
-    DFTFiltre_Reversed({1, 2, 5, 9, 2, 3});
-    Sinus(1.0, 0.0, 2.0, 100);
-    Cosinus(2.0, 0.0, 1.0, 200);
-    Rectangular(5.0, 0.0, 1.0, 500);
-    Sawtooth(3.0, 0.0, 1.0, 300);
+int main(){
     return 0;
 }
